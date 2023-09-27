@@ -1,0 +1,300 @@
+/* Printed page = 5.3" x 8.3" */
+/* With 0.25" margin = 4.8" x 7.8" */
+/* 0.3" grid = 16 x 26 */
+
+
+@page {
+    size: 'letter' landscape;
+}
+
+.page {
+    page-break-after: always;
+}
+
+/* Grid */
+
+body {
+    background: gray;
+    margin: 0px;
+}
+
+section {
+    width: 5.3in;
+    height: 8.3in;
+    background: white;
+    margin-bottom: 0.2in;
+    box-sizing:border-box;
+    border-bottom: 1px dotted rgb(200, 200, 200);
+}
+
+#left_front {
+    float: left;
+    padding: 0.25in;
+}
+
+#right_front {
+    float: right;
+    border-right: 1px dotted rgb(200, 200, 200);
+    margin-right: 0.4in;
+    padding: 0.25in;
+}
+
+#left_back {
+    float: left;
+    border-left: 1px dotted rgb(200, 200, 200);
+    margin-left: 0.4in;
+    padding: 0.25in;
+}
+
+#right_back {
+    float: right;
+    padding: 0.25in;
+}
+
+/* Page with no padding */
+#left_front_nopad {
+    float: left;
+    padding: 0in;
+}
+
+#right_front_nopad {
+    float: right;
+    border-right: 1px dotted rgb(200, 200, 200);
+    margin-right: 0.4in;
+    padding: 0in;
+}
+
+#left_back_nopad {
+    float: left;
+    border-left: 1px dotted rgb(200, 200, 200);
+    margin-left: 0.4in;
+    padding: 0in;
+}
+
+#right_back_nopad {
+    float: right;
+    padding: 0in;
+}
+
+/* Tables */
+
+table {
+    table-layout: fixed;
+}
+
+#no_border {
+    border: none;
+}
+
+table.calendar {
+    border-collapse: separate;
+    margin-top: 0.5in;
+    padding-left: 0in;
+    border-spacing: 0.1in 0in;
+}
+
+table.calendar th {
+    border: 1px solid black;
+    background-color: rgb(200, 200, 200);
+    height: 0.4in;
+    padding-left: 3pt;
+    text-align: left;
+    vertical-align: middle;
+    font-weight: normal;
+    font-family: IM Fell Double Pica;
+    font-size: 13pt;
+}
+
+table.calendar td, tr {
+    border: 1px solid black;
+    vertical-align: top;
+    width: 1.2in;
+}
+
+table.calendar td {
+    /* height: 1.2in; */
+}
+
+table.week {
+    border-collapse: collapse;
+    width: 5.1in;;
+    height: 70%;
+    margin-left: 0.1in;
+    margin-right: 0.1in;
+    margin-top: 10pt;
+}
+
+table.week td, th {
+    border: 1px solid black;
+    font-family: rosarivo;
+    font-weight: normal;
+    font-size: 11pt;
+    padding: 3pt;
+}
+
+table.day {
+    border-collapse: collapse;
+    width: 100%;
+    height: 2in;
+}
+
+table.day td, th {
+    border: 1px solid black;
+    font-family: "IM Fell Double Pica";
+    font-weight: normal;
+    font-size: 11pt;
+    padding: 4pt;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#prompt {
+    background-color: rgb(200, 200, 200);
+    width: 40%;
+}
+
+table.habits {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0.1in;
+    font-family: 'Rosarivo';
+    font-size: 10pt;
+}
+
+table.habits td, tr {
+    border: 1px solid black;
+    height: 0.25in;
+}
+
+table.habits th {
+    width: 0.1in;
+    border: none;
+}
+
+#extended { /*First blank row of habit table*/
+    width: 30%;
+}
+
+table.cover {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0in;
+    width: 4.8in;
+    height: 7.8in;
+    border: none;
+}
+
+table.cover th {
+    border: 1px dashed black;
+}
+
+table.grid {
+    border-collapse: collapse;
+    width: 100%;
+    height: 100%;
+}
+
+table.grid td, th {
+    border: 1px solid gray;
+}
+
+/* Typography */
+
+h1, h2 {
+    font-family: 'Beth Ellen';
+    font-weight: bold;
+    color: black;
+    margin: 0px;
+    padding: 0px;
+    line-height: 34pt;
+    height: 35pt;
+    text-align: left;
+}
+
+h1 {
+    font-size: 27pt;
+    font-weight: normal;
+    padding-top: 15pt;
+    padding-left: 15pt;
+}
+
+h3 {
+    font-family: 'IM Fell English';
+    font-size: 24pt;
+    margin: 0px;
+    font-weight: normal;
+}
+
+h4 {
+    font-family: 'IM Fell English';
+    font-size: 16pt;
+    margin: 0px;
+    font-weight: normal;
+}
+
+#title {
+    margin-top: 85%;
+    font-size: 30pt;
+    font-weight: bold;
+    text-align: center;
+}
+
+#year {
+    font-size: 21pt;
+    margin-bottom: 20pt;
+    text-align: center;
+}
+
+#covertag {
+    font-family: 'IM Fell English';
+    font-size: 12pt;
+    font-weight: normal;
+}
+
+#holiday {
+    text-align: right;
+    padding-left: 1pt;
+    padding-right: 2pt;
+    padding-bottom: 2pt;
+    margin-bottom: 0pt;
+    font-family: milonga;
+}
+
+#date {
+    text-align: left;
+    margin-top: 0pt;
+    padding-top: 2pt;
+    padding-left: 2pt;
+    font-family: rosarivo;
+}
+
+#new_moon {
+    /*font-size: 10pt;*/
+    vertical-align: text-top;
+}
+
+#full_moon {
+    /*font-size: 13pt;*/
+    vertical-align: bottom;
+    
+}
+
+#half_moon {
+    /*font-size: 20pt;*/
+    vertical-align: baseline;
+}
+
+p {
+
+}
+
+p.line {
+    margin-bottom: 17pt;
+    font-family: 'Arial';
+    font-size: 13pt;
+    color: rgb(200, 200, 200);
+}
+
+hr.line {
+    color: rgb(200, 200, 200);
+}
