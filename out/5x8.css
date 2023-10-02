@@ -1,6 +1,6 @@
-/* Printed page = 3" x 5" */
-/* With 0.1" padding = 2.8" x 4.8" */
-/* " grid = 16 x 26 */
+/* Printed page = 5.3" x 8.3" */
+/* With 0.25" margin = 4.8" x 7.8" */
+/* 0.3" grid = 16 x 26 */
 
 
 @page {
@@ -19,11 +19,11 @@ body {
 }
 
 section {
-    width: 3in;
-    height: 5in;
+    width: 5in;
+    height: 8in;
     background: white;
-    margin-top: 1.5in;
-    margin-bottom: 1.5in;
+    margin-top: 0.25in;
+    margin-bottom: 0.25in;
     box-sizing: border-box;
     border-bottom: 1px dotted rgb(200, 200, 200);
     border-top: 1px dotted rgb(200, 200, 200);
@@ -31,29 +31,29 @@ section {
 
 #left_front {
     float: left;
-    padding: 0.10in;
-    margin-left: 2.5in;
+    padding: 0.25in;
+    margin-left: 0.5in;
     border-left: 1px dotted rgb(200, 200, 200);
 }
 
 #right_front {
     float: right;
-    padding: 0.10in;
-    margin-right: 2.5in;
+    padding: 0.25in;
+    margin-right: 0.5in;
     border-right: 1px dotted rgb(200, 200, 200);
 }
 
 #left_back {
     float: left;
-    padding: 0.10in;
-    margin-left: 2.5in;
+    padding: 0.25in;
+    margin-left: 0.5in;
     border-left: 1px dotted rgb(200, 200, 200);
 }
 
 #right_back {
     float: right;
-    padding: 0.10in;
-    margin-right: 2.5in;
+    padding: 0.25in;
+    margin-right: 0.5in;
     border-right: 1px dotted rgb(200, 200, 200);
 }
 
@@ -61,28 +61,28 @@ section {
 #left_front_nopad {
     float: left;
     padding: 0in;
-    margin-left: 2.5in;
+    margin-left: 0.5in;
     border-left: 1px dotted rgb(200, 200, 200);
 }
 
 #right_front_nopad {
     float: right;
     padding: 0in;
-    margin-right: 2.5in;
+    margin-right: 0.5in;
     border-right: 1px dotted rgb(200, 200, 200);
 }
 
 #left_back_nopad {
     float: left;
     padding: 0in;
-    margin-left: 2.5in;
+    margin-left: 0.5in;
     border-left: 1px dotted rgb(200, 200, 200);
 }
 
 #right_back_nopad {
     float: right;
     padding: 0in;
-    margin-right: 2.5in;
+    margin-right: 0.5in;
     border-right: 1px dotted rgb(200, 200, 200);
 }
 

@@ -1,36 +1,131 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-
-import copy
+#import copy
 import calendar as cal
 import shutil as st
 
-
 # Reorder pages from reader spread to printer spread
-def reorder_booklet(pages):
-    """Create bindable booklet from dictionary of page objects where key is page number. Returns ordered list of pages."""
-    read_order = copy.deepcopy(pages)
-    print_order = []
-    if len(read_order) % 2 == 0:
-        print_order.append(read_order.pop(len(read_order)-1)) #pop back
-        front = True
-        for num in range(int((len(pages)-2)/2)):
-            if front == True:
-                print_order.append(read_order.pop(0)) #pop front
-                print_order.append(read_order.pop(0)) #pop front
-                front = not front
-            elif front == False:
-                print_order.append(read_order.pop(len(read_order)-1)) #pop back
-                print_order.append(read_order.pop(len(read_order)-1)) #pop back
-                front = not front
-        print_order.append(read_order.pop(0)) #pop final page
-        return print_order
-    else:
-        print("booklet must be size divisible by 2")
+#def reorder_booklet(pages):
+#    """ Input is list ordered by reader page number. Returns list ordered by print page number. """
+#    read_order = copy.deepcopy(pages)
+#    print_order = []
+#    if len(read_order) % 2 == 0:
+#        print_order.append(read_order.pop(len(read_order)-1)) #pop back
+#        front = True
+#        for num in range(int((len(pages)-2)/2)):
+#            if front == True:
+#                print_order.append(read_order.pop(0)) #pop front
+#                print_order.append(read_order.pop(0)) #pop front
+#                front = not front
+#            elif front == False:
+#                print_order.append(read_order.pop(len(read_order)-1)) #pop back
+#                print_order.append(read_order.pop(len(read_order)-1)) #pop back
+#                front = not front
+#        print_order.append(read_order.pop(0)) #pop final page
+#        return print_order
+#    else:
+#        print("booklet must be size divisible by 2")
 
 
-# Creating the "Page" class hierarchy
+# 'Planner' class hierarchy
+class Planner:
+    def __init__(self, month, year, filename, startDate, endDate, startWeekDay="Mon", myPlanner=[]):
+        self.myPlanner = myPlanner #data structure to hold Page objects
+        self.month = month
+        self.year = year
+        self.filename = filename
+        self.startDate = startDate
+        self.endDate = endDate
+        self.startWeekDay = startWeekDay
+
+    def addPage(self):
+        """ Initialize new Page object & add it to the end of myPlanner """
+
+    def getPrinterSpread(self):
+        """ Return Page objects ordered by printer spread """
+        print_order = []
+        frontPointer = 0
+        backPointer = len(self.myPlanner) - 1
+        if len(self.myPlanner) % 2 == 0:
+            print_order.append(self.myPlanner[backPointer]) #pop back
+            backPointer = backPointer - 1 #update pointer
+            front = True
+            for num in range(int((len(self.myPlanner)-2)/2)):
+                if front == True:
+                    print_order.append(self.myPlanner[frontPointer]) #pop front
+                    frontPointer = frontPointer + 1 #update pointer
+                    print_order.append(self.myPlanner[frontPointer]) #pop front
+                    frontPointer = frontPointer + 1 #update pointer
+                    front = not front
+                elif front == False:
+                    print_order.append(self.myPlanner[backPointer]) #pop back
+                    backPointer = backPointer - 1 #update pointer
+                    print_order.append(self.myPlanner[backPointer]) #pop back
+                    backPointer = backPointer - 1 #update pointer
+                    front = not front
+            print_order.append(self.myPlanner[frontPointer]) #pop final page
+            return print_order
+        else:
+            print("booklet must be size divisible by 2")
+
+    def getReaderSpread(self):
+        """ Return Page objects ordered by reader spread """
+        return self.myPlanner
+
+    def createPlanner(self, size='5x8'):
+        """ Run createPage() for all Pages in Planner, writes HTML file to out folder """
+        printPlanner = self.getPrinterSpread()
+
+        f = open(f'../out/{self.filename}', "w")
+    
+        # html head
+        fhead = open(f'../page_html/{size}/head.html', "r")
+        for line in fhead:
+            f.write(line)
+
+        # html body
+        f.write("""
+        <!-- Content of the booklet -->
+        <body>""")
+            
+        for index in range(int(len(printPlanner)/4)):
+
+            #page1
+            f.write("""
+            
+            <div class="page">
+    """)
+            f.write(printPlanner[4*index].createPage(size))
+
+            #page2
+            f.write(printPlanner[4*index+1].createPage(size))
+            f.write("""
+                </div>
+    """)
+
+            #page3
+            f.write("""
+            
+            <div class="page">
+    """)
+            f.write(printPlanner[4*index+2].createPage(size))
+
+            #page4
+            f.write(printPlanner[4*index+3].createPage(size))
+            f.write("""
+            </div>
+            """)
+                
+        f.write("""
+        
+        </body>
+                """)
+    
+        f.close()
+       
+
+# 'Page' class hierarchy
 class Page:
     def __init__(self, type, section, htmlTemp):
         self.type = type
@@ -50,10 +145,10 @@ class Page:
         """ Return the type variable """
         return self.type
 
-    def createPage(self):
+    def createPage(self, size):
         """ Returns html for the page based on tempate & section """
         html = ""
-        f = open(self.htmlTemp, "r")
+        f = open(f'../page_html/{size}/{self.htmlTemp}', "r")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -62,16 +157,16 @@ class Page:
         return html
 
 class Cover(Page):
-    def __init__(self, section, title, subtitle, tag, type="cover", htmlTemp="../page_html/cover.html"):
+    def __init__(self, section, title, subtitle, tag, type="cover", htmlTemp="cover.html"):
         super().__init__(type, section, htmlTemp)
         self.title = title
         self.subtitle = subtitle
         self.tag = tag
 
-    def createPage(self):
+    def createPage(self, size):
         """ Returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(self.htmlTemp, "r")
+        f = open(f'../page_html/{size}/{self.htmlTemp}', "r")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -86,14 +181,14 @@ class Cover(Page):
         return html
 
 class HabitLeft(Page):
-    def __init__(self, section, heading, type="habitLeft", htmlTemp="../page_html/habitleft.html"):
+    def __init__(self, section, heading, type="habitLeft", htmlTemp="habitleft.html"):
         super().__init__(type, section, htmlTemp)
         self.heading = heading
 
-    def createPage(self):
+    def createPage(self, size):
         """ Returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(self.htmlTemp, "r")
+        f = open(f'../page_html/{size}/{self.htmlTemp}', "r")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -104,14 +199,14 @@ class HabitLeft(Page):
         return html
 
 class HabitRight(Page):
-    def __init__(self, section, heading, type="habitRight", htmlTemp="../page_html/habitright.html"):
+    def __init__(self, section, heading, type="habitRight", htmlTemp="habitright.html"):
         super().__init__(type, section, htmlTemp)
         self.heading = heading
 
-    def createPage(self):
+    def createPage(self, size):
         """ Returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(self.htmlTemp, "r")
+        f = open(f'../page_html/{size}/{self.htmlTemp}', "r")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -122,13 +217,13 @@ class HabitRight(Page):
         return html
 
 class CalLeft(Page):
-    def __init__(self, section, type="calLeft", htmlTemp="../page_html/calleft.html"):
+    def __init__(self, section, type="calLeft", htmlTemp="calleft.html"):
         super().__init__(type, section, htmlTemp)
 
-    def createPage(self):
+    def createPage(self, size):
         """ Returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(self.htmlTemp, "r")
+        f = open(f'../page_html/{size}/{self.htmlTemp}', "r")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -137,13 +232,13 @@ class CalLeft(Page):
         return html
 
 class CalRight(Page):
-    def __init__(self, section, type="calRight", htmlTemp="../page_html/calright.html"):
+    def __init__(self, section, type="calRight", htmlTemp="calright.html"):
         super().__init__(type, section, htmlTemp)
 
-    def createPage(self):
+    def createPage(self, size):
         """ Returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(self.htmlTemp, "r")
+        f = open(f'../page_html/{size}/{self.htmlTemp}', "r")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -152,7 +247,7 @@ class CalRight(Page):
         return html
 
 class Week(Page):
-    def __init__(self, section, days, type="week", htmlTemp="../page_html/week.html"):
+    def __init__(self, section, days, type="week", htmlTemp="week.html"):
         super().__init__(type, section, htmlTemp)
         self.days = days
 
@@ -166,10 +261,10 @@ class Week(Page):
         elif num in [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28, 29, 30]:
             return "th"
     
-    def createPage(self):
+    def createPage(self, size):
         """ returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(self.htmlTemp, "r")
+        f = open(f'../page_html/{size}/{self.htmlTemp}', "r")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -206,14 +301,14 @@ class Week(Page):
         return html
 
 class Day(Page):
-    def __init__(self, section, date, type="day", htmlTemp="../page_html/day.html"):
+    def __init__(self, section, date, type="day", htmlTemp="day.html"):
         super().__init__(type, section, htmlTemp)
         self.date = date
 
-    def createPage(self):
+    def createPage(self, size):
         """ returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(self.htmlTemp, "r")
+        f = open(f'../page_html/{size}/{self.htmlTemp}', "r")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -224,13 +319,13 @@ class Day(Page):
         return html
 
 class Lined(Page):
-    def __init__(self, section, type="lined", htmlTemp="../page_html/lined.html"):
+    def __init__(self, section, type="lined", htmlTemp="lined.html"):
         super().__init__(type, section, htmlTemp)
 
-    def createPage(self):
+    def createPage(self, size):
         """ returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(self.htmlTemp, "r")
+        f = open(f'../page_html/{size}/{self.htmlTemp}', "r")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -239,13 +334,13 @@ class Lined(Page):
         return html
 
 class Graph(Page):
-    def __init__(self, section, type="graph", htmlTemp="../page_html/graph.html"):
+    def __init__(self, section, type="graph", htmlTemp="graph.html"):
         super().__init__(type, section, htmlTemp)
 
-    def createPage(self):
+    def createPage(self, size):
         """ returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(self.htmlTemp, "r")
+        f = open(f'../page_html/{size}/{self.htmlTemp}', "r")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -254,14 +349,14 @@ class Graph(Page):
         return html
 
 class Question(Page):
-    def __init__(self, section, question, type="question", htmlTemp="../page_html/question.html"):
+    def __init__(self, section, question, type="question", htmlTemp="question.html"):
         super().__init__(type, section, htmlTemp)
         self.question = question
 
-    def createPage(self):
+    def createPage(self, size):
         """ returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(self.htmlTemp, "r")
+        f = open(f'../page_html/{size}/{self.htmlTemp}', "r")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -273,11 +368,7 @@ class Question(Page):
 
 
 # writing the html
-month = "September"
-year = "2023"
-filename = "sept23.html"
-
-page_list = [Cover("", month, year, '&#8220Look well into thyself;</br>there is a source of strength</br>which will always spring up</br>if thou wilt always look.&#8221</br>Marcus Aurelius'),
+page_list = [Cover("", 'October', '2023', '&#8220Adopt the pace of nature: her secret is patience.&#8221</br>Ralph Waldo Emerson'),
             HabitLeft("", "Goals & Intentions"),
             HabitRight("", "Self Encouragement"),
             CalLeft(""),
@@ -334,59 +425,64 @@ def setSections(pageList):
     else:
         print("Booklet must be size divisible by 2")
 
-def build_book(month, year, pageList, fileout):
-    """ Assemble html of the book """
-    f = open(f"../out/{fileout}", "w")
-    
-    # html head
-    fhead = open('../page_html/head.html', "r")
-    for line in fhead:
-        f.write(line)
-
-    # html body
-    f.write("""
-    <!-- content of the booklet -->
-    <body>""")
-            
-    for index in range(int(len(pageList)/4)):
-
-        #page1
-        f.write("""
-        
-        <div class="page">
-""")
-        f.write(pageList[4*index].createPage())
-
-        #page2
-        f.write(pageList[4*index+1].createPage())
-        f.write("""
-            </div>
-""")
-
-        #page3
-        f.write("""
-        
-        <div class="page">
-""")
-        f.write(pageList[4*index+2].createPage())
-
-        #page4
-        f.write(pageList[4*index+3].createPage())
-        f.write("""
-        </div>
-        """)
-                
-    f.write("""
-    
-    </body>
-            """)
-    
-    f.close()
-
-
+#def build_book(month, year, pageList, fileout):
+#    """ Assemble html of the book """
+#    f = open(f"../out/{fileout}", "w")
+#    
+#    # html head
+#    fhead = open('../page_html/head.html', "r")
+#    for line in fhead:
+#        f.write(line)
+#
+#    # html body
+#    f.write("""
+#    <!-- content of the booklet -->
+#    <body>""")
+#            
+#    for index in range(int(len(pageList)/4)):
+#
+#        #page1
+#        f.write("""
+#        
+#        <div class="page">
+#""")
+#        f.write(pageList[4*index].createPage())
+#
+#        #page2
+#        f.write(pageList[4*index+1].createPage())
+#        f.write("""
+#            </div>
+#""")
+#
+#        #page3
+#        f.write("""
+#        
+#        <div class="page">
+#""")
+#        f.write(pageList[4*index+2].createPage())
+#
+#        #page4
+#        f.write(pageList[4*index+3].createPage())
+#        f.write("""
+#        </div>
+#        """)
+#                
+#    f.write("""
+#    
+#    </body>
+#            """)
+#    
+#    f.close()
 
 
-page_list = reorder_booklet(page_list)
+
+#Set up list of pages 
 setSections(page_list)
-build_book(month, year, page_list, filename)
 
+#Create 5x8 planner
+planner_5x8 = Planner('October', '2023', 'oct23_5x8.html', 0, 31, myPlanner=page_list)
+planner_5x8.createPlanner(size='5x8')
+
+#Create A5 Slim planner
+planner_A5slim = Planner('October', '2023', 'oct23_A5slim.html', 0, 31, myPlanner=page_list)
+planner_A5slim.createPlanner(size='A5slim')
