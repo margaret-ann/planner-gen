@@ -165,7 +165,7 @@ table.day td, th {
 table.habits {
     border-collapse: collapse;
     width: 100%;
-    margin-top: 0.05in;
+    margin-top: 0.2in;
     font-family: 'Rosarivo';
     font-size: 10pt;
 }
@@ -176,8 +176,8 @@ table.habits td, tr {
 }
 
 table.habits th {
+    border: 1px solid black;
     width: 0.1in;
-    border: none;
 }
 
 #extended { /*First blank row of habit table*/
@@ -242,6 +242,7 @@ h4 {
 }
 
 #title {
+    padding-left: 0pt;
     text-align: center;
     margin-top: 85%;
     font-size: 30pt;

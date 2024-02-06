@@ -128,7 +128,7 @@ table.calendar td {
 
 table.week {
     border-collapse: collapse;
-    width: 5.1in;;
+    width: 5.1in;
     height: 70%;
     margin-left: 0.1in;
     margin-right: 0.1in;
@@ -146,7 +146,7 @@ table.week td, th {
 table.day {
     border-collapse: collapse;
     width: 100%;
-    height: 2in;
+    height: 2.1in;
 }
 
 table.day td, th {
@@ -154,7 +154,7 @@ table.day td, th {
     font-family: "IM Fell Double Pica";
     font-weight: normal;
     font-size: 11pt;
-    padding: 4pt;
+    padding: 10pt;
     text-align: center;
     vertical-align: middle;
 }
@@ -167,19 +167,19 @@ table.day td, th {
 table.habits {
     border-collapse: collapse;
     width: 100%;
-    margin-top: 0.1in;
+    margin-top: 0.2in;
     font-family: 'Rosarivo';
     font-size: 10pt;
 }
 
 table.habits td, tr {
-    border: 1px solid black;
     height: 0.25in;
+    border: 1px solid black;
 }
 
 table.habits th {
     width: 0.1in;
-    border: none;
+    border: 1px solid black;
 }
 
 #extended { /*First blank row of habit table*/
@@ -206,7 +206,7 @@ table.grid {
 }
 
 table.grid td, th {
-    border: 1px solid gray;
+    border: 1px solid rgb(200, 200, 200);
 }
 
 /* Typography */
@@ -244,6 +244,7 @@ h4 {
 }
 
 #title {
+    padding-left: 0pt;
     margin-top: 85%;
     font-size: 30pt;
     font-weight: bold;
@@ -308,5 +309,5 @@ p.line {
 }
 
 hr.line {
-    color: rgb(200, 200, 200);
+    border: 1px solid rgb(200, 200, 200);
 }

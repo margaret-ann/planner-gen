@@ -68,6 +68,7 @@ class Planner:
     def createPlanner(self, filename='out.html', size='5x8', spread='printer'):
         """ Run createPage() for all Pages in Planner, writes HTML file to out folder """
         self.size = size
+        self.spread = spread
         
         if spread == 'printer':
             self.setSections()
@@ -79,8 +80,10 @@ class Planner:
         f = open(f'./out/{filename}', 'w', encoding='utf-8')
     
         # html head
-        fhead = open(f'./page_html/{size}/head.html', 'r', encoding='utf-8')
+        fhead = open(f'./page_html/head.html', 'r', encoding='utf-8')
         for line in fhead:
+            if "{{size}}" in line:
+                line = line.replace("{{size}}", size)
             f.write(line)
 
         # html body

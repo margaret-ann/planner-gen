@@ -1,5 +1,6 @@
 import calendar as cal
 import datetime
+import math
 
 # 'Page' class hierarchy
 class Page:
@@ -81,38 +82,35 @@ class Cover(Page):
         f.close()
         return html
 
-class HabitLeft(Page):
-    def __init__(self, section, heading, type="habitLeft", htmlTemp="habitleft.html"):
+class Heading(Page):
+    def __init__(self, section, heading, type="heading", htmlTemp="heading.html"):
         super().__init__(type, section, htmlTemp)
         self.heading = heading
 
     def createPage(self, size):
         """ Returns html for the page based on tempate & instance variables """
         html = ""
+        line_html = ""
+        lines = 0
+
+        if size == '5x8':
+            lines = 28
+        elif size == 'A5slim':
+            lines = 29
+        elif size == '3x5':
+            lines = 25
+
+        for line in range(lines):
+            line_html += '<p class="line"><hr class="line"></hr></p>\n'
+
         f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
             if "{{heading}}" in line:
                 line = line.replace("{{heading}}", self.heading)
-            html += line
-        f.close()
-        return html
-
-class HabitRight(Page):
-    def __init__(self, section, heading, type="habitRight", htmlTemp="habitright.html"):
-        super().__init__(type, section, htmlTemp)
-        self.heading = heading
-
-    def createPage(self, size):
-        """ Returns html for the page based on tempate & instance variables """
-        html = ""
-        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
-        for line in f:
-            if "{{section}}" in line:
-                line = line.replace("{{section}}", self.section)
-            if "{{heading}}" in line:
-                line = line.replace("{{heading}}", self.heading)
+            if "{{lines}}" in line:
+                line = line.replace("{{lines}}", line_html)
             html += line
         f.close()
         return html
@@ -127,12 +125,9 @@ class CalLeft(Page):
         #Create days list
         obj = cal.Calendar()
         self.days = []
-        for index, day in enumerate(obj.itermonthdays(self.year, self.month)):
+        for index, day in enumerate(obj.itermonthdates(self.year, self.month)):
             if (index+1)%7 == 1 or (index+1)%7 == 2 or (index+1)%7 == 3 or (index+1)%7 == 4:
-                if day == 0:
-                    self.days.append("*")
-                else:
-                    self.days.append(day)
+                self.days.append(day.day)
 
         #Pull holiday dictionary for correct month
         self.myHoliday = self.holiday[month-1]
@@ -173,12 +168,9 @@ class CalRight(Page):
         #Create days list
         obj = cal.Calendar()
         self.days = []
-        for index, day in enumerate(obj.itermonthdays(self.year, self.month)):
+        for index, day in enumerate(obj.itermonthdates(self.year, self.month)):
             if (index+1)%7 == 5 or (index+1)%7 == 6 or (index+1)%7 == 0:
-                if day == 0:
-                    self.days.append("*")
-                else:
-                    self.days.append(day)
+                self.days.append(day.day)
 
         #Pull holiday dictionary for correct month
         self.myHoliday = self.holiday[month-1]
@@ -276,7 +268,20 @@ class Day(Page):
     def createPage(self, size):
         """ returns html for the page based on tempate & instance variables """
         html = ""
+        line_html = ""
         prompt_cnt = 0
+        lines = 0
+
+        if size == '5x8':
+            lines = 20
+        elif size == 'A5slim':
+            lines = 21
+        elif size == '3x5':
+            lines = 20
+
+        for line in range(lines):
+            line_html += '<p class="line"><hr class="line"></hr></p>\n'
+
         f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
@@ -286,6 +291,8 @@ class Day(Page):
             if "{{prompt}}" in line:
                 line = line.replace("{{prompt}}", self.prompts[prompt_cnt])
                 prompt_cnt += 1
+            if "{{lines}}" in line:
+                line = line.replace("{{lines}}", line_html)
             html += line
         f.close()
         return html
@@ -384,6 +391,56 @@ class Question(Page):
                 line = line.replace("{{question}}", self.question)
             if "{{lines}}" in line:
                 line = line.replace("{{lines}}", line_html)
+            html += line
+        f.close()
+        return html
+    
+class Habit(Page):
+    def __init__(self, section, date, myHabits, type="habit", htmlTemp="habit.html"):
+        super().__init__(type, section, htmlTemp)
+        self.date = date #any date of the month
+        self.myHabits = myHabits
+
+        #Create days list
+        obj = cal.Calendar()
+        self.days = []
+        for index, day in enumerate(obj.itermonthdays(self.date.year, self.date.month)):
+            if day != 0:
+                self.days.append(day)
+
+    def createPage(self, size):
+        """ returns html for the page based on tempate & instance variables """
+        html = ""
+        habit_html = ""
+        habit_cnt = 0
+
+        new_row = math.ceil(len(self.days)/3)
+
+        for habit in range(len(self.myHabits)):
+            habit_html += f'''
+                <!-- habit table -->
+                <table class="habits">
+                    <tbody>
+                        <tr>
+                            <th rowspan="3" id="extended">{self.myHabits[habit_cnt]}</th>\n'''
+            habit_cnt += 1
+            for day in self.days:
+                habit_html += f"\t\t\t\t\t\t\t<th>{day}</th>\n"
+                if day%new_row == 0:
+                    habit_html += '''
+                        </tr>
+                        <tr>\n'''
+            habit_html += "\t\t\t\t\t\t</tr>\n"        
+            habit_html += '''
+                    </tbody>
+                </table>\n'''
+
+        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
+        for line in f:
+            if "{{section}}" in line:
+                line = line.replace("{{section}}", self.section)
+            if "{{habit}}" in line:
+                line = line.replace("{{habit}}", habit_html)
             html += line
         f.close()
         return html

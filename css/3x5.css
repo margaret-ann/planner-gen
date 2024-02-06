@@ -131,7 +131,7 @@ table.week {
     width: 2.8in;
     margin-left: 0.1in;
     margin-right: 0.1in;
-    margin-top: 5pt;
+    margin-top: 10pt;
 }
 
 table.week td, th {
@@ -154,33 +154,12 @@ table.day td, th {
     font-size: 7pt;
     text-align: center;
     vertical-align: middle;
+    height: 0.215in;
 }
 
 #prompt {
     background-color: rgb(200, 200, 200);
     width: 40%;
-}
-
-table.habits {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 0in;
-    font-family: 'Rosarivo';
-    font-size: 1pt;
-}
-
-table.habits td, tr {
-    border: 1px solid black;
-    height: 0.1in;
-}
-
-table.habits th {
-    width: 0.01in;
-    border: none;
-}
-
-#extended { /*First blank row of habit table*/
-    width: 30%;
 }
 
 table.cover {
@@ -204,6 +183,31 @@ table.grid {
 
 table.grid td, th {
     border: 1px solid rgb(200, 200, 200);
+    height: 0.1in;
+}
+
+table.habits {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0.2in;
+    font-family: 'Rosarivo';
+    font-size: 1pt;
+}
+
+table.habits td, tr { /*row, col of habit table*/
+    height: 0.1in;
+    border: 1px solid black;
+}
+
+table.habits th { /*excluding first col of habit table*/
+    width: 0.1in;
+    border: 1px solid black;
+}
+
+#extended { /*First blank row of habit table*/
+    width: 30%;
+    font-size: 8pt;
+    font-family: 'IM Fell English';
 }
 
 /* Typography */
@@ -304,9 +308,8 @@ p.line {
     margin-bottom: 7pt;
     font-family: 'Arial';
     font-size: 4pt;
-    color: rgb(200, 200, 200);
 }
 
 hr.line {
-    color: rgb(200, 200, 200);
+    border: 1px solid rgb(200, 200, 200);
 }
