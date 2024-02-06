@@ -34,8 +34,9 @@ class Planner:
         else:
             print("Booklet must be size divisible by 2")
 
-    def getPrinterSpread(self):
+    def getPrinterSpread(self, perPage=2):
         """ Return Page objects ordered by printer spread """
+        
         print_order = []
         frontPointer = 0
         backPointer = len(self.myPlanner) - 1
@@ -57,9 +58,28 @@ class Planner:
                     backPointer = backPointer - 1 #update pointer
                     front = not front
             print_order.append(self.myPlanner[frontPointer]) #pop final page
-            return print_order
         else:
             print("booklet must be size divisible by 2")
+
+        if perPage == 2:
+            return print_order
+        elif perPage == 4:
+            print_tup = []
+            for i, elem in enumerate(print_order):
+                if i%2 == 0:
+                    print_tup.append((print_order[i], print_order[i+1]))
+            for i, elem in enumerate(print_tup):
+                if i%4 == 3:
+                    temp = print_tup[i-2]
+                    print_tup[i-2] = print_tup[i-1]
+                    print_tup[i-1] = temp
+            print_order_4 = []
+            for one, two in print_tup:
+                print_order_4.append(one)
+                print_order_4.append(two)
+            return print_order_4
+        else:
+            print(f"Printing {perPage} planner pages per printer page is not supported")
 
     def getReaderSpread(self):
         """ Return Page objects ordered by reader spread """
@@ -72,7 +92,10 @@ class Planner:
         
         if spread == 'printer':
             self.setSections()
-            newPlanner = self.getPrinterSpread()
+            if size == '5x8' or size == 'A5slim':
+                newPlanner = self.getPrinterSpread()
+            elif size == '3x5':
+                newPlanner = self.getPrinterSpread(perPage=4)
         elif spread == 'reader':
             self.setSections() #replace this soon
             newPlanner = self.getReaderSpread()

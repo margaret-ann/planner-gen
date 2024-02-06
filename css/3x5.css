@@ -32,28 +32,28 @@ section {
 #left_front {
     float: left;
     padding: 0.1in;
-    margin-left: 1.15in;
+    margin-left: 1.25in;
     border-left: 1px dotted rgb(200, 200, 200);
 }
 
 #right_front {
     float: right;
     padding: 0.1in;
-    margin-right: 1.15in;
+    margin-right: 1.25in;
     border-right: 1px dotted rgb(200, 200, 200);
 }
 
 #left_back {
     float: left;
     padding: 0.1in;
-    margin-left: 1.15in;
+    margin-left: 1.25in;
     border-left: 1px dotted rgb(200, 200, 200);
 }
 
 #right_back {
     float: right;
     padding: 0.1in;
-    margin-right: 1.15in;
+    margin-right: 1.25in;
     border-right: 1px dotted rgb(200, 200, 200);
 }
 
@@ -61,28 +61,28 @@ section {
 #left_front_nopad {
     float: left;
     padding: 0in;
-    margin-left: 1.15in;
+    margin-left: 1.25in;
     border-left: 1px dotted rgb(200, 200, 200);
 }
 
 #right_front_nopad {
     float: right;
     padding: 0in;
-    margin-right: 1.15in;
+    margin-right: 1.25in;
     border-right: 1px dotted rgb(200, 200, 200);
 }
 
 #left_back_nopad {
     float: left;
     padding: 0in;
-    margin-left: 1.15in;
+    margin-left: 1.25in;
     border-left: 1px dotted rgb(200, 200, 200);
 }
 
 #right_back_nopad {
     float: right;
     padding: 0in;
-    margin-right: 1.15in;
+    margin-right: 1.25in;
     border-right: 1px dotted rgb(200, 200, 200);
 }
 
