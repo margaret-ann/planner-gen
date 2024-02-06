@@ -1,11 +1,38 @@
 import calendar as cal
+import datetime
 
 # 'Page' class hierarchy
 class Page:
+
     def __init__(self, type, section, htmlTemp):
         self.type = type
         self.section = section
         self.htmlTemp = htmlTemp
+
+        self.weekDict = {
+            0: "Monday",
+            1: "Tuesday",
+            2: "Wednesday",
+            3: "Thursday",
+            4: "Friday",
+            5: "Saturday",
+            6: "Sunday",
+        }
+
+        self.monthDict = {
+            1: "January",
+            2: "February",
+            3: "March",
+            4: "April",
+            5: "May",
+            6: "June",
+            7: "July",
+            8: "August",
+            9: "September",
+            10: "October",
+            11: "November",
+            12: "December",
+        }
 
     def setSection(self, newSection):
         """ Set the section variable """
@@ -22,7 +49,7 @@ class Page:
     def createPage(self, size):
         """ Returns html for the page based on tempate & section """
         html = ""
-        f = open(f'./page_html/{size}/{self.htmlTemp}', "r", encoding="utf-8")
+        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -40,7 +67,7 @@ class Cover(Page):
     def createPage(self, size):
         """ Returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(f'./page_html/{size}/{self.htmlTemp}', "r", encoding="utf-8")
+        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -62,7 +89,7 @@ class HabitLeft(Page):
     def createPage(self, size):
         """ Returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(f'./page_html/{size}/{self.htmlTemp}', "r", encoding="utf-8")
+        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -80,7 +107,7 @@ class HabitRight(Page):
     def createPage(self, size):
         """ Returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(f'./page_html/{size}/{self.htmlTemp}', "r", encoding="utf-8")
+        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -114,8 +141,7 @@ class CalLeft(Page):
         """ Returns html for the page based on tempate & instance variables """
         html = ""
         day_index = 0
-
-        f = open(f'./page_html/{size}/{self.htmlTemp}', 'r', encoding='utf-8')
+        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -161,8 +187,7 @@ class CalRight(Page):
         """ Returns html for the page based on tempate & instance variables """
         html = ""
         day_index = 0
-        
-        f = open(f'./page_html/{size}/{self.htmlTemp}', 'r', encoding='utf-8')
+        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -179,11 +204,21 @@ class CalRight(Page):
         return html
 
 class Week(Page):
-    def __init__(self, section, days, type="week", htmlTemp="week.html"):
+    def __init__(self, section, date, type="week", htmlTemp="week.html"):
         super().__init__(type, section, htmlTemp)
-        self.days = days
+        self.date = date #can be any date within the week
+
+        #generate days list from date
+        self.days = []
+        iso_date = self.date.isocalendar()
+        cal_day = date.fromisocalendar(iso_date[0], iso_date[1], 1)
+        delta = datetime.timedelta(days=1)
+        for i in range(7):
+            self.days.append(cal_day.day)
+            cal_day += delta
 
     def getOrdinal(self, num):
+        """ Returns ordinal string for date """
         if num in [1, 21, 31]:
             return "st"
         elif num in [2, 22]:
@@ -196,7 +231,7 @@ class Week(Page):
     def createPage(self, size):
         """ returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(f'./page_html/{size}/{self.htmlTemp}', "r", encoding='utf-8')
+        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
@@ -233,19 +268,24 @@ class Week(Page):
         return html
 
 class Day(Page):
-    def __init__(self, section, date, type="day", htmlTemp="day.html"):
+    def __init__(self, section, date, prompts=[None,None,None], type="day", htmlTemp="day.html"):
         super().__init__(type, section, htmlTemp)
         self.date = date
+        self.prompts = prompts
 
     def createPage(self, size):
         """ returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(f'./page_html/{size}/{self.htmlTemp}', "r", encoding="utf-8")
+        prompt_cnt = 0
+        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
             if "{{date}}" in line:
-                line = line.replace("{{date}}", self.date)
+                line = line.replace("{{date}}", f"{self.weekDict[self.date.weekday()]}, {self.monthDict[self.date.month]} {self.date.day}")
+            if "{{prompt}}" in line:
+                line = line.replace("{{prompt}}", self.prompts[prompt_cnt])
+                prompt_cnt += 1
             html += line
         f.close()
         return html
@@ -257,10 +297,25 @@ class Lined(Page):
     def createPage(self, size):
         """ returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(f'./page_html/{size}/{self.htmlTemp}', "r", encoding="utf-8")
+        line_html = ""
+        line_cnt = 0
+
+        if size == '5x8':
+            line_cnt = 29
+        elif size == 'A5slim':
+            line_cnt = 30
+        elif size == '3x5':
+            line_cnt = 26
+
+        for l in range(line_cnt):
+            line_html += '<p class="line"><hr class="line"></hr></p>'
+
+        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
+            if "{{lines}}" in line:
+                line = line.replace("{{lines}}", line_html)
             html += line
         f.close()
         return html
@@ -272,10 +327,30 @@ class Graph(Page):
     def createPage(self, size):
         """ returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(f'./page_html/{size}/{self.htmlTemp}', "r", encoding="utf-8")
+        row = 0
+        col = 0
+
+        # choose grid based on size
+        if size == '5x8' or size == 'A5slim':
+            row = 16
+            col = 26
+        elif size == '3x5':
+            row = 11
+            col = 19
+
+        grid_html = ""
+        for c in range(col):
+            grid_html += "<tr>\n"
+            for r in range(row):
+                grid_html += "<th></th>\n"
+            grid_html += "</tr>\n"
+
+        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
+            if "{{grid}}" in line:
+                line = line.replace("{{grid}}", grid_html)
             html += line
         f.close()
         return html
@@ -288,12 +363,27 @@ class Question(Page):
     def createPage(self, size):
         """ returns html for the page based on tempate & instance variables """
         html = ""
-        f = open(f'./page_html/{size}/{self.htmlTemp}', "r", encoding="utf-8")
+        line_html = ""
+        lines = 0
+
+        if size == '5x8':
+            lines = 28
+        elif size == 'A5slim':
+            lines = 30
+        elif size == '3x5':
+            lines = 25
+
+        for line in range(lines):
+            line_html += '<p class="line"><hr class="line"></hr></p>\n'
+
+        f = open(f'./page_html/{self.htmlTemp}', "r", encoding="utf-8")
         for line in f:
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
             if "{{question}}" in line:
                 line = line.replace("{{question}}", self.question)
+            if "{{lines}}" in line:
+                line = line.replace("{{lines}}", line_html)
             html += line
         f.close()
         return html

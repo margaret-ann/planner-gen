@@ -1,19 +1,27 @@
+import datetime
+import page as pg
+
 # 'Planner' class hierarchy
 class Planner:
-    def __init__(self, month, year, startDate, endDate, startWeekDay="Mon", myPlanner=[]):
+    def __init__(self, startDate, endDate, startWeekDay="Mon", myPlanner=[]):
         self.myPlanner = myPlanner #data structure to hold Page objects
-        self.month = month
-        self.year = year
         self.startDate = startDate
         self.endDate = endDate
         self.startWeekDay = startWeekDay
 
-        #Set section variable of page objects
-        self.setSections()
+    def addPage(self, newPage):
+        """ Add page object to end of planner list """
+        self.myPlanner.append(newPage)
 
-    #TODO
-    def addPage(self):
-        """ Initialize new Page object & add it to the end of myPlanner """
+    def addWeekofDays(self, myDay, myPrompts):
+        """ Add full week of daily pages """
+        myDays = []
+        iso_date = myDay.isocalendar()
+        cal_day = myDay.fromisocalendar(iso_date[0], iso_date[1], 1)
+        delta = datetime.timedelta(days=1)
+        for i in range(7):
+            self.addPage(pg.Day("", cal_day, myPrompts))
+            cal_day += delta
 
     def setSections(self):
         """ Assign printed page orientation to each page based on list order """
@@ -57,9 +65,16 @@ class Planner:
         """ Return Page objects ordered by reader spread """
         return self.myPlanner
 
-    def createPlanner(self, filename='out.html', size='5x8'):
+    def createPlanner(self, filename='out.html', size='5x8', spread='printer'):
         """ Run createPage() for all Pages in Planner, writes HTML file to out folder """
-        printPlanner = self.getPrinterSpread()
+        self.size = size
+        
+        if spread == 'printer':
+            self.setSections()
+            newPlanner = self.getPrinterSpread()
+        elif spread == 'reader':
+            self.setSections() #replace this soon
+            newPlanner = self.getReaderSpread()
 
         f = open(f'./out/{filename}', 'w', encoding='utf-8')
     
@@ -73,17 +88,17 @@ class Planner:
         <!-- Content of the booklet -->
         <body>""")
             
-        for index in range(int(len(printPlanner)/4)):
+        for index in range(int(len(newPlanner)/4)):
 
             #page1
             f.write("""
             
             <div class="page">
     """)
-            f.write(printPlanner[4*index].createPage(size))
+            f.write(newPlanner[4*index].createPage(size))
 
             #page2
-            f.write(printPlanner[4*index+1].createPage(size))
+            f.write(newPlanner[4*index+1].createPage(size))
             f.write("""
                 </div>
     """)
@@ -93,10 +108,10 @@ class Planner:
             
             <div class="page">
     """)
-            f.write(printPlanner[4*index+2].createPage(size))
+            f.write(newPlanner[4*index+2].createPage(size))
 
             #page4
-            f.write(printPlanner[4*index+3].createPage(size))
+            f.write(newPlanner[4*index+3].createPage(size))
             f.write("""
             </div>
             """)

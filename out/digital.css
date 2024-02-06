@@ -1,6 +1,6 @@
-/* Printed page = 5.3" x 8.3" */
-/* With 0.25" margin = 4.8" x 7.8" */
-/* 0.3" grid = 16 x 26 */
+/* Digital page = 8.5" x 11" */
+/* With 0.25" margin = 8" x 10.5" */
+/* grid math here */
 
 
 @page {
@@ -9,6 +9,8 @@
 
 .page {
     page-break-after: always;
+    padding: 0in;
+    margin: 0in;
 }
 
 /* Grid */
@@ -19,71 +21,12 @@ body {
 }
 
 section {
-    width: 5.3in;
-    height: 8.3in;
+    width: 8in;
+    height: 10.5in;
     background: white;
-    margin-top: 0.1in;
-    margin-bottom: 0.1in;
+    margin-top: 0in;
+    margin-bottom: 0in;
     box-sizing: border-box;
-    border-bottom: 1px dotted rgb(200, 200, 200);
-    border-top: 1px dotted rgb(200, 200, 200);
-}
-
-#left_front {
-    float: left;
-    padding: 0.25in;
-    margin-left: 0.2in;
-    border-left: 1px dotted rgb(200, 200, 200);
-}
-
-#right_front {
-    float: right;
-    padding: 0.25in;
-    margin-right: 0.2in;
-    border-right: 1px dotted rgb(200, 200, 200);
-}
-
-#left_back {
-    float: left;
-    padding: 0.25in;
-    margin-left: 0.2in;
-    border-left: 1px dotted rgb(200, 200, 200);
-}
-
-#right_back {
-    float: right;
-    padding: 0.25in;
-    margin-right: 0.2in;
-    border-right: 1px dotted rgb(200, 200, 200);
-}
-
-/* Page with no padding */
-#left_front_nopad {
-    float: left;
-    padding: 0in;
-    margin-left: 0.2in;
-    border-left: 1px dotted rgb(200, 200, 200);
-}
-
-#right_front_nopad {
-    float: right;
-    padding: 0in;
-    margin-right: 0.2in;
-    border-right: 1px dotted rgb(200, 200, 200);
-}
-
-#left_back_nopad {
-    float: left;
-    padding: 0in;
-    margin-left: 0.2in;
-    border-left: 1px dotted rgb(200, 200, 200);
-}
-
-#right_back_nopad {
-    float: right;
-    padding: 0in;
-    margin-right: 0.2in;
-    border-right: 1px dotted rgb(200, 200, 200);
 }
 
 /* Tables */
@@ -189,8 +132,8 @@ table.cover {
     margin-left: auto;
     margin-right: auto;
     margin-top: 0in;
-    width: 4.8in;
-    height: 7.8in;
+    width: 8in;
+    height: 10.5in;
     border: none;
 }
 

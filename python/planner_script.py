@@ -1,61 +1,47 @@
-#!/usr/bin/env python
-# coding: utf-8
+# Example script that generates planner booklets for January 2024
 
 import planner as pln
 import page as pg
 import holiday
 import quote
 import calendar as cal
+import datetime
 
-# writing the html
-feb24 = [
-    pg.Cover("", 'February', '2024', f'&#8220{quote.quotes["Joan of Arc"][0]}&#8221</br>Joan of Arc'),
-    pg.HabitLeft("", "Goals & Intentions"),
-    pg.HabitRight("", "Self Encouragement"),
-    pg.CalLeft("", 2, 2024, holiday.holidayMaster),
-    pg.CalRight("", 2, 2024, holiday.holidayMaster),
-    pg.Week("", [4, 5, 6, 7, 8, 9, 10]),
-    pg.Day("", "Monday, September 4"),
-    pg.Day("", "Tuesday, sepember 5"),
-    pg.Day("", "Wednesday, September 6"),
-    pg.Day("", "Thursday, September 7"),
-    pg.Day("", "Friday, September 8"),
-    pg.Day("", "Saturday, September 9"),
-    pg.Day("", "Sunday, September 10"),
-    pg.Week("", [11, 12, 13, 14, 15, 16, 17]),
-    pg.Day("", "Monday, September 11"),
-    pg.Day("", "Tuesday, sepember 12"),
-    pg.Day("", "Wednesday, September 13"),
-    pg.Day("", "Thursday, September 14"),
-    pg.Day("", "Friday, September 15"),
-    pg.Day("", "Saturday, September 16"),
-    pg.Day("", "Sunday, September 17"),
-    pg.Week("", [18, 19, 20, 21, 22, 23, 24]),
-    pg.Day("", "Monday, September 18"),
-    pg.Day("", "Tuesday, sepember 19"),
-    pg.Day("", "Wednesday, September 20"),
-    pg.Day("", "Thursday, September 21"),
-    pg.Day("", "Friday, September 22"),
-    pg.Day("", "Saturday, September 23"),
-    pg.Day("", "Sunday, September 24"),
-    pg.Week("", [25, 26, 27, 28, 29, 30, 31]),
-    pg.Day("", "Monday, September 25"),
-    pg.Day("", "Tuesday, sepember 26"),
-    pg.Day("", "Wednesday, September 27"),
-    pg.Day("", "Thursday, September 28"),
-    pg.Day("", "Friday, September 29"),
-    pg.Day("", "Saturday, September 30"),
-    pg.Day("", "Sunday, october 1"),
-    pg.Lined(""),
-    pg.Lined(""),
-    pg.Lined(""),
-    pg.Lined(""),
-    pg.Graph(""),
-    pg.Graph(""),
-    pg.Question("", "What did you learn this month?"),
+# Create an empty planner
+start_date = datetime.date.fromisoformat('2024-01-01')
+end_date = datetime.date.fromisoformat('2024-02-01') #not including
+jan24_pln = pln.Planner(start_date, end_date)
+
+# Daily prompt questions
+promptList = [
+    "How is your mood?",
+    "What are you grateful for?",
+    "Who did you help?",
 ]
 
-#Create 5x8 & A5slim planners
-feb24_planner = pln.Planner('October', '2023', 0, 29, myPlanner=feb24)
-feb24_planner.createPlanner(filename='feb24_5x8.html', size='5x8')
-feb24_planner.createPlanner(filename='feb24_A5slim.html', size='A5slim')
+# Add pages to planner
+page_cnt = 0
+jan24_pln.addPage(pg.Cover("", 'January', '2024', f'&#8220{quote.quotes["Mary Shelley"][3]}&#8221</br>Mary Shelley'))
+jan24_pln.addPage(pg.HabitLeft("", "Goals & Intentions"))
+jan24_pln.addPage(pg.HabitRight("", "Self Encouragement"))
+jan24_pln.addPage(pg.CalLeft("", 1, 2024, holiday.holidayMaster))
+jan24_pln.addPage(pg.CalRight("", 1, 2024, holiday.holidayMaster))
+date_pointer = start_date
+week = datetime.timedelta(days=7)
+while date_pointer < end_date:
+    jan24_pln.addPage(pg.Week("", date_pointer))
+    jan24_pln.addWeekofDays(date_pointer, promptList)
+    date_pointer += week
+    page_cnt += 8
+page_cnt += 8
+for i in range(4-page_cnt%4):
+    jan24_pln.addPage(pg.Lined(""))
+for i in range(2):
+    jan24_pln.addPage(pg.Graph(""))
+jan24_pln.addPage(pg.Question("", "What did you learn this month?"))
+
+# Create planners
+jan24_pln.createPlanner(filename='out_5x8.html', size='5x8')
+jan24_pln.createPlanner(filename='out_A5slim.html', size='A5slim')
+jan24_pln.createPlanner(filename='out_3x5.html', size='3x5')
+jan24_pln.createPlanner(spread='reader', filename='out_reader.html', size='A5slim')
