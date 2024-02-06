@@ -127,7 +127,7 @@ class CalLeft(Page):
         self.days = []
         for index, day in enumerate(obj.itermonthdates(self.year, self.month)):
             if (index+1)%7 == 1 or (index+1)%7 == 2 or (index+1)%7 == 3 or (index+1)%7 == 4:
-                self.days.append(day.day)
+                self.days.append(day)
 
         #Pull holiday dictionary for correct month
         self.myHoliday = self.holiday[month-1]
@@ -141,11 +141,12 @@ class CalLeft(Page):
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
             if "{{date}}" in line:
-                line = line.replace("{{date}}", str(self.days[day_index]))
+                line = line.replace("{{date}}", str(self.days[day_index].day))
                 day_index += 1
             if "{{holiday}}" in line:
-                if self.days[day_index-1] in self.myHoliday:
-                    line = line.replace("{{holiday}}", self.myHoliday[self.days[day_index-1]][0])
+                thisDay = self.days[day_index-1]
+                if (thisDay.day in self.myHoliday) and (thisDay.month == self.month):
+                    line = line.replace("{{holiday}}", self.myHoliday[thisDay.day][0])
                 else:
                     line = line.replace("{{holiday}}", "</br></br></br></br>")
             html += line
@@ -170,7 +171,7 @@ class CalRight(Page):
         self.days = []
         for index, day in enumerate(obj.itermonthdates(self.year, self.month)):
             if (index+1)%7 == 5 or (index+1)%7 == 6 or (index+1)%7 == 0:
-                self.days.append(day.day)
+                self.days.append(day)
 
         #Pull holiday dictionary for correct month
         self.myHoliday = self.holiday[month-1]
@@ -184,11 +185,12 @@ class CalRight(Page):
             if "{{section}}" in line:
                 line = line.replace("{{section}}", self.section)
             if "{{date}}" in line:
-                line = line.replace("{{date}}", str(self.days[day_index]))
+                line = line.replace("{{date}}", str(self.days[day_index].day))
                 day_index += 1
             if "{{holiday}}" in line:
-                if self.days[day_index-1] in self.myHoliday:
-                    line = line.replace("{{holiday}}", self.myHoliday[self.days[day_index-1]][0])
+                thisDay = self.days[day_index-1]
+                if (thisDay.day in self.myHoliday) and (thisDay.month == self.month):
+                    line = line.replace("{{holiday}}", self.myHoliday[thisDay.day][0])
                 else:
                     line = line.replace("{{holiday}}", "</br></br></br></br>")
             html += line
