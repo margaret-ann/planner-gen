@@ -13,6 +13,11 @@ class Planner:
         """ Add page object to end of planner list """
         self.myPlanner.append(newPage)
 
+    def printPlannerSummary(self):
+        """ Add page object to end of planner list """
+        for i in range(len(self.myPlanner)):
+            print(f"Page {i}: {self.myPlanner[i].getType()}")
+
     def addWeekofDays(self, myDay, myPrompts):
         """ Add full week of daily pages """
         myDays = []
@@ -23,51 +28,51 @@ class Planner:
             self.addPage(pg.Day("", cal_day, myPrompts))
             cal_day += delta
 
-    def setSections(self):
+    def setSections(self, myBook):
         """ Assign printed page orientation to each page based on list order """
-        if len(self.myPlanner) % 2 == 0:
-            for index in range(int(len(self.myPlanner)/4)):
-                self.myPlanner[4*index].setSection("left_front")
-                self.myPlanner[4*index+1].setSection("right_front")
-                self.myPlanner[4*index+2].setSection("left_back")
-                self.myPlanner[4*index+3].setSection("right_back")
+        if len(myBook) % 2 == 0:
+            for index in range(int(len(myBook)/4)):
+                myBook[4*index].setSection("left_front")
+                myBook[4*index+1].setSection("right_front")
+                myBook[4*index+2].setSection("left_back")
+                myBook[4*index+3].setSection("right_back")
+            return myBook
         else:
             print("Booklet must be size divisible by 2")
 
     def getPrinterSpread(self, perPage=2):
         """ Return Page objects ordered by printer spread """
-        
         print_order = []
         frontPointer = 0
         backPointer = len(self.myPlanner) - 1
-        if len(self.myPlanner) % 2 == 0:
-            print_order.append(self.myPlanner[backPointer]) #pop back
-            backPointer = backPointer - 1 #update pointer
-            front = True
-            for num in range(int((len(self.myPlanner)-2)/2)):
-                if front == True:
-                    print_order.append(self.myPlanner[frontPointer]) #pop front
-                    frontPointer = frontPointer + 1 #update pointer
-                    print_order.append(self.myPlanner[frontPointer]) #pop front
-                    frontPointer = frontPointer + 1 #update pointer
-                    front = not front
-                elif front == False:
-                    print_order.append(self.myPlanner[backPointer]) #pop back
-                    backPointer = backPointer - 1 #update pointer
-                    print_order.append(self.myPlanner[backPointer]) #pop back
-                    backPointer = backPointer - 1 #update pointer
-                    front = not front
-            print_order.append(self.myPlanner[frontPointer]) #pop final page
-        else:
+        if len(self.myPlanner) % 2 != 0:
             print("booklet must be size divisible by 2")
+
+        print_order.append(self.myPlanner[backPointer]) #pop back
+        backPointer = backPointer - 1 #update pointer
+        front = True
+        for num in range(int((len(self.myPlanner)-2)/2)):
+            if front == True:
+                print_order.append(self.myPlanner[frontPointer]) #pop front
+                frontPointer = frontPointer + 1 #update pointer
+                print_order.append(self.myPlanner[frontPointer]) #pop front
+                frontPointer = frontPointer + 1 #update pointer
+                front = not front
+            elif front == False:
+                print_order.append(self.myPlanner[backPointer]) #pop back
+                backPointer = backPointer - 1 #update pointer
+                print_order.append(self.myPlanner[backPointer]) #pop back
+                backPointer = backPointer - 1 #update pointer
+                front = not front
+        print_order.append(self.myPlanner[frontPointer]) #pop final page
 
         if perPage == 2:
             return print_order
         elif perPage == 4:
             print_tup = []
             for i, elem in enumerate(print_order):
-                if i%2 == 0:
-                    print_tup.append((print_order[i], print_order[i+1]))
+                if i%2 == 1:
+                    print_tup.append((print_order[i-1], print_order[i]))
             for i, elem in enumerate(print_tup):
                 if i%4 == 3:
                     temp = print_tup[i-2]
@@ -90,15 +95,15 @@ class Planner:
         self.size = size
         self.spread = spread
         
-        if spread == 'printer':
-            self.setSections()
-            if size == '5x8' or size == 'A5slim':
-                newPlanner = self.getPrinterSpread()
-            elif size == '3x5':
+        if self.spread == 'printer':
+            if (self.size == '5x8') or (self.size == 'A5slim'):
+                newPlanner = self.getPrinterSpread(perPage=2)
+            elif self.size == '3x5':
                 newPlanner = self.getPrinterSpread(perPage=4)
-        elif spread == 'reader':
-            self.setSections() #replace this soon
+            newPlanner = self.setSections(newPlanner)
+        elif self.spread == 'reader':
             newPlanner = self.getReaderSpread()
+            newPlanner = self.setSections(newPlanner) #replace this soon
 
         f = open(f'./out/{filename}', 'w', encoding='utf-8')
     
